@@ -146,42 +146,77 @@ declare(strict_types=1);
 
   // __call() for the functions and methods //  
 
-class UserDatabase 
+// class UserDatabase 
+// {
+//     private array $users = [
+//         ['id' => 1, 'name' => 'Ali', 'city' => 'Lahore'],
+//         ['id' => 2, 'name' => 'Sara', 'city' => 'Karachi']
+//     ];
+
+//     public function __call(string $methodName, array $arguments): mixed
+//     {
+//         if (str_starts_with($methodName, 'findBy')) {
+
+//             $field = strtolower(substr($methodName, 6)); 
+//             $searchValue = $arguments[0] ?? null;
+
+//             echo "Searching field '$field' for value '$searchValue'...\n";
+
+//             foreach ($this->users as $user) {
+//                 if (isset($user[$field]) && $user[$field] === $searchValue) {
+//                     return $user;
+//                 }
+//             }
+
+//             return "User not found!";
+//         }
+
+//         return "Method '$methodName()' does not exist on this class!";
+//     }
+
+// }
+
+// $db = new UserDatabase();
+
+// $user1 = $db->findByCity('Lahore');
+// print_r($user1);
+
+// $user2 = $db->findByName('Sara');
+// print_r($user2);
+
+// echo $db->sendEmailNotification("Test");
+
+  // __toString() //
+
+class UserProfile
+
 {
-    private array $users = [
-        ['id' => 1, 'name' => 'Ali', 'city' => 'Lahore'],
-        ['id' => 2, 'name' => 'Sara', 'city' => 'Karachi']
-    ];
+    public function __construct(
+        public string $username,
+        public string $role,
+        public bool $isActive = true
+    ) {}
 
-    public function __call(string $methodName, array $arguments): mixed
+    public function __toString(): string
     {
-        if (str_starts_with($methodName, 'findBy')) {
-
-            $field = strtolower(substr($methodName, 6)); 
-            $searchValue = $arguments[0] ?? null;
-
-            echo "Searching field '$field' for value '$searchValue'...\n";
-
-            foreach ($this->users as $user) {
-                if (isset($user[$field]) && $user[$field] === $searchValue) {
-                    return $user;
-                }
-            }
-
-            return "User not found!";
-        }
-
-        return "Method '$methodName()' does not exist on this class!";
+        return json_encode([
+            'username' => $this->username,
+            'role'     => $this->role,
+            'status'   => $this->isActive ? 'Active' : 'Inactive'
+        ]);
     }
-
+    // cannot give object as string php will throw fatal error.
+    // public function getFormattedName(): string 
+    // {
+    //     return "User: " . $this->username;
+    // }
 }
 
-$db = new UserDatabase();
+$user = new UserProfile("ali_developer", "Backend Engineer");
 
-$user1 = $db->findByCity('Lahore');
-print_r($user1);
+echo "1. Direct Object Echo:\n";
+echo $user . "\n\n";
 
-$user2 = $db->findByName('Sara');
-print_r($user2);
-
-echo $db->sendEmailNotification("Test");
+echo "2. Concatenated String:\n";
+$logMessage = "Current Logged User: " . $user;
+echo $logMessage . "\n";
