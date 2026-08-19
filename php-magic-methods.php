@@ -1,6 +1,7 @@
 <?php 
 
 declare(strict_types=1);
+// __contruct
 
 // class PaymentProcessor {
 
@@ -36,50 +37,108 @@ declare(strict_types=1);
 // echo "Total amount to be cahrged including fee: {$total}\n";
 
 
-class AuditLogger
 
- {
+  // __destruct // 
 
-    private $fileStream;
+// class AuditLogger
 
-    public function __construct(
+//  {
 
-        public string $logFile
-    ){
+//     private $fileStream;
 
-      $this->fileStream = fopen($this->logFile, 'a');
-      echo "1. [CONSTRUCT] Log file stream opened for writing: {$this->logFile}\n";
-    }
+//     public function __construct(
 
-    public function writeLog(string $event) : void {
+//         public string $logFile
+//     ){
 
-         if($this->fileStream) {
-            fwrite($this->fileStream, date('Y-m-d H:i:s') . " - {$event}\n");
-         } else {
-            throw new RuntimeException("File stream is not available.");
-         }
-    }
+//       $this->fileStream = fopen($this->logFile, 'a');
+//       echo "1. [CONSTRUCT] Log file stream opened for writing: {$this->logFile}\n";
+//     }
 
-    // object memory se remove hote hi autorun hoga
+//     public function writeLog(string $event) : void {
 
-    public function __destruct()
+//          if($this->fileStream) {
+//             fwrite($this->fileStream, date('Y-m-d H:i:s') . " - {$event}\n");
+//          } else {
+//             throw new RuntimeException("File stream is not available.");
+//          }
+//     }
+
+//     // object memory se remove hote hi autorun hoga
+
+//     public function __destruct()
+//     {
+//         if (is_resource($this->fileStream)) {
+//             fclose($this->fileStream);
+//             echo "3. [DESTRUCT] File stream closed safely. Zero resource leaks!\n";
+//         }
+//     }
+
+
+// }
+
+// function executeLoggingProcess(): void
+// {
+//     $logger = new AuditLogger('system_audit.log');
+//     $logger->writeLog("User #102 changed password");
+//     echo "--- End of function scope ---\n";
+// }
+
+// executeLoggingProcess();
+
+// echo "4. Script execution completely finished.\n";
+
+
+    // __get() //
+
+// class User 
+// {
+//     private array $data = [
+//         'name' => 'Ali',
+//         'age' => 25
+//     ];
+
+
+//     public function __get(string $key): mixed 
+//     {
+//         return $this->data[$key] ?? "Key '$key' does not exist!";
+//     }
+// }                                     
+
+// $user = new User();
+
+// //  'name', class ki property nahi hai lekin __get isko $data array se read karsakta hai
+
+// echo $user->name . "\n";
+// echo $user->city . "\n";
+
+  // __set() //
+
+class User {
+
+private array $data = [];
+
+public function __set(string $key, mixed $value): void 
     {
-        if (is_resource($this->fileStream)) {
-            fclose($this->fileStream);
-            echo "3. [DESTRUCT] File stream closed safely. Zero resource leaks!\n";
+        if ($key === 'age' && $value < 18) {
+            echo "❌ Error: Age must be 18 or above!\n";
+            return;
         }
+    echo "✅ Storing '$key' = '$value'\n";
+        $this->data[$key] = $value;
+}
+
+public function getData(): array 
+    {
+        return $this->data;
     }
-
-
 }
 
-function executeLoggingProcess(): void
-{
-    $logger = new AuditLogger('system_audit.log');
-    $logger->writeLog("User #102 changed password");
-    echo "--- End of function scope ---\n";
-}
+$user = new User();
 
-executeLoggingProcess();
+$user->role = 'Admin';
+$user->age = 15;
+$user->age = 25;
 
-echo "4. Script execution completely finished.\n";
+echo "\nFinal Stored Data:\n";
+print_r($user->getData());
