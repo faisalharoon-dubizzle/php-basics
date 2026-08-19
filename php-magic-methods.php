@@ -114,31 +114,74 @@ declare(strict_types=1);
 
   // __set() //
 
-class User {
+// class User {
 
-private array $data = [];
+// private array $data = [];
 
-public function __set(string $key, mixed $value): void 
+// public function __set(string $key, mixed $value): void 
+//     {
+//         if ($key === 'age' && $value < 18) {
+//             echo "❌ Error: Age must be 18 or above!\n";
+//             return;
+//         }
+//     echo "✅ Storing '$key' = '$value'\n";
+//         $this->data[$key] = $value;
+// }
+
+// public function getData(): array 
+//     {
+//         return $this->data;
+//     }
+// }
+
+// $user = new User();
+
+// $user->role = 'Admin';
+// $user->age = 15;
+// $user->age = 25;
+
+// echo "\nFinal Stored Data:\n";
+// print_r($user->getData());
+
+
+  // __call() for the functions and methods //  
+
+class UserDatabase 
+{
+    private array $users = [
+        ['id' => 1, 'name' => 'Ali', 'city' => 'Lahore'],
+        ['id' => 2, 'name' => 'Sara', 'city' => 'Karachi']
+    ];
+
+    public function __call(string $methodName, array $arguments): mixed
     {
-        if ($key === 'age' && $value < 18) {
-            echo "❌ Error: Age must be 18 or above!\n";
-            return;
+        if (str_starts_with($methodName, 'findBy')) {
+
+            $field = strtolower(substr($methodName, 6)); 
+            $searchValue = $arguments[0] ?? null;
+
+            echo "Searching field '$field' for value '$searchValue'...\n";
+
+            foreach ($this->users as $user) {
+                if (isset($user[$field]) && $user[$field] === $searchValue) {
+                    return $user;
+                }
+            }
+
+            return "User not found!";
         }
-    echo "✅ Storing '$key' = '$value'\n";
-        $this->data[$key] = $value;
-}
 
-public function getData(): array 
-    {
-        return $this->data;
+        return "Method '$methodName()' does not exist on this class!";
     }
+
 }
 
-$user = new User();
+$db = new UserDatabase();
 
-$user->role = 'Admin';
-$user->age = 15;
-$user->age = 25;
+$user1 = $db->findByCity('Lahore');
+print_r($user1);
 
-echo "\nFinal Stored Data:\n";
-print_r($user->getData());
+$user2 = $db->findByName('Sara');
+print_r($user2);
+
+echo $db->sendEmailNotification("Test");
