@@ -1,4 +1,5 @@
 <?php
+// 1: Creational Patterns (Objects creations ways)
 // A. Singleton Pattern
 
 declare(strict_types=1);
